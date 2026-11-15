@@ -10,8 +10,8 @@ repository.workspace = true
 
 [dependencies]
 orx-plugin.workspace = true
-# libjack is loaded at run time (dynamic_loading): building needs no JACK
-# headers or library, running needs a JACK server
+# On Linux, jack-sys finds libjack with pkg-config at build time: building
+# needs the JACK development files, running needs a JACK server
 jack = "0.13"
 
 [lints]

@@ -25,8 +25,11 @@ jobs:
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      # jackd for the end-to-end test of orx-run (skipped without it)
-      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jackd2
+      # jackd for the end-to-end test of orx-run (skipped without it), and
+      # the JACK development files jack-sys looks up with pkg-config
+      - run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jackd2 libjack-jackd2-dev
       - run: cargo fmt --all --check
       - run: cargo clippy --workspace --all-targets --locked -- -D warnings
       - run: cargo test --workspace --locked
@@ -39,6 +42,9 @@ jobs:
       - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@1.90
       - uses: Swatinem/rust-cache@v2
+      - run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libjack-jackd2-dev
       - run: cargo test --workspace --locked
 
   bundles:
@@ -77,7 +83,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - run: |
           sudo apt-get update
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends clang lld serdi sordi lv2-dev
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends clang lld serdi sordi lv2-dev libjack-jackd2-dev
       # The way a developer builds the Pi bundles on a PC, with the sysroot
       # script (docker on the runner). The Turtle, schema, ELF and glibc
       # checks run; the others need an aarch64 machine (the arm64 job above)

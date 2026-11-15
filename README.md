@@ -79,8 +79,10 @@ and other 64-bit ARM boards.
 
 ## Build and test
 
-Rust 1.90 or later. Building needs no C library: libjack is loaded at run
-time.
+Rust 1.90 or later. On Linux the build looks up JACK with pkg-config, so it
+needs the JACK development files (`libjack-jackd2-dev` on Debian and Ubuntu,
+`pipewire-jack-audio-connection-kit-devel` on Fedora). The plugins themselves
+do not use JACK.
 
 ```sh
 cargo test --workspace
