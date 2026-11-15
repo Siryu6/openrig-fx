@@ -1,0 +1,18 @@
+# Port lock of https://openrig.eu/plugins/tremolo-stereo: append only, never edit a line
+0 in_l audio-in
+1 in_r audio-in
+2 out_l audio-out
+3 out_r audio-out
+4 rate control-in
+5 sync control-in
+6 depth control-in
+7 shape control-in
+8 mode control-in
+9 crossover control-in
+10 output control-in
+11 spread control-in
+12 enabled enabled
+13 lfo_phase control-out
+14 lfo_gain control-out
+15 events atom-in
+16 cycle atom-out

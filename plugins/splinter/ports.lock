@@ -1,0 +1,23 @@
+# Port lock of https://openrig.eu/plugins/splinter: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 events atom-in
+3 hold control-in
+4 action control-in
+5 slice control-in
+6 repeats control-in
+7 decay control-in
+8 step control-in
+9 stop_time control-in
+10 tape_start control-in
+11 pattern control-in
+12 duty control-in
+13 scope control-in
+14 bits control-in
+15 rate control-in
+16 chaos control-in
+17 mix control-in
+18 quantize control-in
+19 tempo control-in
+20 enabled enabled
+21 grid atom-out

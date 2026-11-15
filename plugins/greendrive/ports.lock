@@ -1,0 +1,9 @@
+# Port lock of https://openrig.eu/plugins/green-drive: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 drive control-in
+3 tone control-in
+4 level control-in
+5 voicing control-in
+6 enabled enabled
+7 tight control-in

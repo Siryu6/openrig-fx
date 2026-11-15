@@ -1,0 +1,8 @@
+# Port lock of https://openrig.eu/plugins/black-dist: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 distortion control-in
+3 tone control-in
+4 level control-in
+5 voicing control-in
+6 enabled enabled

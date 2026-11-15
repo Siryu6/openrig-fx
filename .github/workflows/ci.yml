@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: Format, Clippy, tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      # jackd for the end-to-end test of orx-run (skipped without it)
+      - run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends jackd2
+      - run: cargo fmt --all --check
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - run: cargo test --workspace --locked
+      - run: cargo xtask vocab --check
+
+  msrv:
+    name: Rust 1.90
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@1.90
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --workspace --locked
+
+  bundles:
+    name: Bundles (${{ matrix.triple }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            triple: x86_64-unknown-linux-gnu
+          # Raspberry Pi 5: built and validated natively, so the load,
+          # lv2lint and jalv checks run on the real architecture
+          - runner: ubuntu-24.04-arm
+            triple: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/lv2-tools
+      # Every check must run: a missing tool fails
+      - run: cargo xtask bundle --strict
+      - uses: actions/upload-artifact@v7
+        with:
+          name: bundles-${{ matrix.triple }}
+          path: target/bundles/${{ matrix.triple }}
+
+  cross:
+    name: Cross build (aarch64)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-unknown-linux-gnu
+      - uses: Swatinem/rust-cache@v2
+      - run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends clang lld serdi sordi lv2-dev
+      # The way a developer builds the Pi bundles on a PC, with the sysroot
+      # script (docker on the runner). The Turtle, schema, ELF and glibc
+      # checks run; the others need an aarch64 machine (the arm64 job above)
+      - run: |
+          scripts/aarch64-sysroot.sh "$RUNNER_TEMP/sysroot"
+          eval "$(scripts/aarch64-sysroot.sh --env "$RUNNER_TEMP/sysroot")"
+          cargo xtask bundle --target aarch64-unknown-linux-gnu
+
+  openrig:
+    name: In OpenRig's LV2 host
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          repository: Siryu6/OpenRig
+          path: openrig
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            .
+            target/openrig-host -> target
+      - uses: ./.github/actions/lv2-tools
+      # What the pedalboard crate needs without its default features
+      - run: sudo apt-get install -y --no-install-recommends libfontconfig1-dev libxkbcommon-dev
+      - run: cargo xtask bundle
+      - run: cargo xtask openrig-host openrig

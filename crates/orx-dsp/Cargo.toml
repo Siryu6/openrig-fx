@@ -1,0 +1,15 @@
+[package]
+name = "orx-dsp"
+description = "Real-time-safe DSP building blocks of OpenRig FX: smoothing, filters, delay lines, oversampling, LFOs, denormal control"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-simd.workspace = true
+
+[lints]
+workspace = true

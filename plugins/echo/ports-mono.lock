@@ -1,0 +1,19 @@
+# Port lock of https://openrig.eu/plugins/echo: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 time control-in
+3 sync control-in
+4 feedback control-in
+5 level control-in
+6 mode control-in
+7 low_cut control-in
+8 high_cut control-in
+9 modulation control-in
+10 drive control-in
+11 duck control-in
+12 duck_threshold control-in
+13 dry control-in
+14 enabled enabled
+15 delay_ms control-out
+16 ducking control-out
+17 events atom-in

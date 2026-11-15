@@ -1,0 +1,12 @@
+# Port lock of https://openrig.eu/plugins/graphic-eq: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 g100 control-in
+3 g200 control-in
+4 g400 control-in
+5 g800 control-in
+6 g1600 control-in
+7 g3200 control-in
+8 g6400 control-in
+9 level control-in
+10 enabled enabled

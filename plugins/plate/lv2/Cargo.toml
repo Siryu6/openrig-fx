@@ -1,0 +1,21 @@
+[package]
+name = "orx-plate-lv2"
+description = "OR Plate as an LV2 bundle (or-plate.lv2)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "or_plate"
+crate-type = ["cdylib"]
+
+[dependencies]
+orx-lv2.workspace = true
+orx-plate.workspace = true
+
+[lints]
+workspace = true

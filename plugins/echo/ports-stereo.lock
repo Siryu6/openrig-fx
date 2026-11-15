@@ -1,0 +1,22 @@
+# Port lock of https://openrig.eu/plugins/echo-stereo: append only, never edit a line
+0 in_l audio-in
+1 in_r audio-in
+2 out_l audio-out
+3 out_r audio-out
+4 time control-in
+5 sync control-in
+6 feedback control-in
+7 level control-in
+8 mode control-in
+9 low_cut control-in
+10 high_cut control-in
+11 modulation control-in
+12 drive control-in
+13 duck control-in
+14 duck_threshold control-in
+15 dry control-in
+16 ping_pong control-in
+17 enabled enabled
+18 delay_ms control-out
+19 ducking control-out
+20 events atom-in

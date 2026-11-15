@@ -1,0 +1,16 @@
+name: Feature request
+description: An idea for a plugin or a control.
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What you want to do
+      description: The sound or the use, on stage, at home or in the studio. This matters more than a solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: How it could work
+      description: What you picture. Describe effects by what they do rather than by brand or model.

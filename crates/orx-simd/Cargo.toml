@@ -1,0 +1,12 @@
+[package]
+name = "orx-simd"
+description = "SIMD dispatch for the hot kernels of OpenRig FX: runtime AVX2/FMA on x86_64, NEON on aarch64, scalar elsewhere"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[lints]
+workspace = true

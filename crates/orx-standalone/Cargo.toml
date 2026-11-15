@@ -1,0 +1,18 @@
+[package]
+name = "orx-standalone"
+description = "JACK host of OpenRig FX plugins: run one without an LV2 host, and probe JACK clients"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-plugin.workspace = true
+# libjack is loaded at run time (dynamic_loading): building needs no JACK
+# headers or library, running needs a JACK server
+jack = "0.13"
+
+[lints]
+workspace = true

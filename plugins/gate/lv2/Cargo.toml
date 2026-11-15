@@ -1,0 +1,21 @@
+[package]
+name = "orx-gate-lv2"
+description = "OR Gate as an LV2 bundle (or-gate.lv2)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "or_gate"
+crate-type = ["cdylib"]
+
+[dependencies]
+orx-lv2.workspace = true
+orx-gate.workspace = true
+
+[lints]
+workspace = true

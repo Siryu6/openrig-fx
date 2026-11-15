@@ -1,0 +1,101 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/orx-dsp",
+    "crates/orx-simd",
+    "crates/orx-plugin",
+    "crates/orx-lv2",
+    "crates/orx-standalone",
+    "crates/orx-test",
+    "crates/orx-suite",
+    "plugins/tremolo",
+    "plugins/tremolo/lv2",
+    "plugins/echo",
+    "plugins/echo/lv2",
+    "plugins/plate",
+    "plugins/plate/lv2",
+    "plugins/eq",
+    "plugins/eq/lv2",
+    "plugins/drive",
+    "plugins/drive/lv2",
+    "plugins/gate",
+    "plugins/gate/lv2",
+    "plugins/comp",
+    "plugins/comp/lv2",
+    "plugins/greendrive",
+    "plugins/greendrive/lv2",
+    "plugins/blackdist",
+    "plugins/blackdist/lv2",
+    "plugins/drop",
+    "plugins/drop/lv2",
+    "plugins/splinter",
+    "plugins/splinter/lv2",
+    "apps/orx-run",
+    "xtask",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.90"
+license = "GPL-3.0-or-later"
+authors = ["OpenRig FX contributors"]
+repository = "https://github.com/Siryu6/openrig-fx"
+homepage = "https://openrig.eu/fx"
+
+[workspace.dependencies]
+orx-dsp = { path = "crates/orx-dsp" }
+orx-simd = { path = "crates/orx-simd" }
+orx-plugin = { path = "crates/orx-plugin" }
+orx-lv2 = { path = "crates/orx-lv2" }
+orx-standalone = { path = "crates/orx-standalone" }
+orx-test = { path = "crates/orx-test" }
+orx-suite = { path = "crates/orx-suite" }
+orx-tremolo = { path = "plugins/tremolo" }
+orx-echo = { path = "plugins/echo" }
+orx-plate = { path = "plugins/plate" }
+orx-eq = { path = "plugins/eq" }
+orx-drive = { path = "plugins/drive" }
+orx-gate = { path = "plugins/gate" }
+orx-comp = { path = "plugins/comp" }
+orx-green-drive = { path = "plugins/greendrive" }
+orx-black-dist = { path = "plugins/blackdist" }
+orx-drop = { path = "plugins/drop" }
+orx-splinter = { path = "plugins/splinter" }
+
+[workspace.lints.rust]
+unsafe_op_in_unsafe_fn = "deny"
+missing_debug_implementations = "allow"
+
+[workspace.lints.clippy]
+undocumented_unsafe_blocks = "deny"
+unwrap_used = "warn"
+expect_used = "warn"
+dbg_macro = "deny"
+todo = "deny"
+# `next()` is the natural name for per-sample generators (smoothers, LFOs)
+should_implement_trait = "allow"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "unwind" # the LV2 wrapper catches panics at the C boundary
+strip = "symbols"
+debug = false
+overflow-checks = false
+
+# Benches and golden tests measure the optimised code
+[profile.bench]
+inherits = "release"
+strip = "none"
+
+[profile.dev]
+opt-level = 1
+
+# DSP code in tests runs millions of samples
+[profile.dev.package."*"]
+opt-level = 3
+
+[profile.test]
+opt-level = 2

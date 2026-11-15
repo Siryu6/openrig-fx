@@ -1,0 +1,63 @@
+name: Bug report
+description: A plugin does not work or sound as it should.
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: plugin
+    attributes:
+      label: Plugin
+      options:
+        - OR Tremolo
+        - OR Echo
+        - OR Plate
+        - OR EQ
+        - OR Graphic EQ
+        - OR Drive
+        - OR Gate
+        - OR Comp
+        - OR Green Drive
+        - OR Black Dist
+        - OR Drop
+        - OR Splinter
+        - Several, or the build
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. For a sound problem, the settings and what you played.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Load OR Echo, Tape mode
+        2. Set the time to 600 ms
+        3. …
+  - type: input
+    id: version
+    attributes:
+      label: OpenRig FX version
+      placeholder: "0.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host
+      options:
+        - OpenRig on a Raspberry Pi
+        - OpenRig on an x86_64 PC
+        - Another LV2 host (say which below)
+        - orx-run (JACK standalone)
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Machine and logs
+      description: Host name and version, processor, sample rate and buffer size, and any error output.
+      render: text

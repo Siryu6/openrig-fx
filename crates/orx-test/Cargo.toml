@@ -1,0 +1,17 @@
+[package]
+name = "orx-test"
+description = "Test kit of OpenRig FX: signals, WAV golden files, allocation trap, plugin conformance suite, port lock, benchmarks"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+orx-dsp.workspace = true
+orx-plugin.workspace = true
+
+[lints]
+workspace = true

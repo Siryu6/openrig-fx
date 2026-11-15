@@ -1,0 +1,762 @@
+@prefix atom: <http://lv2plug.in/ns/ext/atom#> .
+@prefix lv2: <http://lv2plug.in/ns/lv2core#> .
+@prefix openrig: <https://openrig.eu/ns/view#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Generated from orx_plugin::view by `cargo xtask vocab`: do not edit.
+# Specification: docs/OPENRIG-VIEWS.md
+
+<https://openrig.eu/ns/view#>
+    a owl:Ontology ;
+    rdfs:label "OpenRig native views" ;
+    rdfs:comment "Metadata letting a host draw a native view of a plugin: the view, port roles, exact curves and data streams." ;
+    owl:versionInfo "1" .
+
+openrig:View
+    a rdfs:Class ;
+    rdfs:label "View" ;
+    rdfs:comment "A kind of native view a host draws for a plugin. Instances are the views below." .
+
+openrig:Role
+    a rdfs:Class ;
+    rdfs:label "Role" ;
+    rdfs:comment "What a port means to the view. Instances are lower camel case individuals; each states its value convention." .
+
+openrig:Waveform
+    a rdfs:Class ;
+    rdfs:label "Waveform" ;
+    rdfs:comment "An LFO waveform with an exact definition, so the host draws the curve the plugin plays." .
+
+openrig:FilterShape
+    a rdfs:Class ;
+    rdfs:label "FilterShape" ;
+    rdfs:comment "A filter response with the RBJ Audio EQ Cookbook definition, for openrig:curve bands. openrig:Off is a band that contributes nothing." .
+
+openrig:QUnit
+    a rdfs:Class ;
+    rdfs:label "QUnit" ;
+    rdfs:comment "How the Q value of an openrig:curve band reads." .
+
+openrig:DynamicsKind
+    a rdfs:Class ;
+    rdfs:label "DynamicsKind" ;
+    rdfs:comment "The kind of processor a DynamicsView draws." .
+
+openrig:Curve
+    a rdfs:Class ;
+    rdfs:label "Curve" ;
+    rdfs:comment "One band of a frequency response the host computes from port values." .
+
+openrig:ShapeChoice
+    a rdfs:Class ;
+    rdfs:label "ShapeChoice" ;
+    rdfs:comment "One value of an openrig:shapePort and the band shape it selects." .
+
+openrig:Stream
+    a rdfs:Class ;
+    rdfs:label "Stream" ;
+    rdfs:comment "Description of the frames an atom output port sends." .
+
+openrig:StreamContent
+    a rdfs:Class ;
+    rdfs:label "StreamContent" ;
+    rdfs:comment "What the values of a stream frame are." .
+
+openrig:Frame
+    a rdfs:Class ;
+    rdfs:label "Frame" ;
+    rdfs:comment "Atom object sent on a stream port: openrig:channels (Int), openrig:position (Float) and openrig:values (Vector of Float, channel after channel)." .
+
+openrig:Family
+    a rdfs:Class ;
+    rdfs:label "Family" ;
+    rdfs:comment "How a host presents a plugin: in its own look, or as a faceplate of its own." .
+
+openrig:KnobStyle
+    a rdfs:Class ;
+    rdfs:label "KnobStyle" ;
+    rdfs:comment "The knob shape a faceplate draws." .
+
+openrig:Finish
+    a rdfs:Class ;
+    rdfs:label "Finish" ;
+    rdfs:comment "The surface of a faceplate." .
+
+openrig:PlateStyle
+    a rdfs:Class ;
+    rdfs:label "PlateStyle" ;
+    rdfs:comment "How the plate name of a faceplate is lettered." .
+
+openrig:view
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "view" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:View ;
+    rdfs:comment "The view a host should draw above the plugin's controls." .
+
+openrig:waveform
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "waveform" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:Waveform ;
+    rdfs:comment "Waveform of an LfoView; openrig:lfoShape morphs it where the waveform says so." .
+
+openrig:dynamics
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "dynamics" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:DynamicsKind ;
+    rdfs:comment "Kind of processor of a DynamicsView." .
+
+openrig:curve
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "curve" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:Curve ;
+    rdfs:comment "A band of the frequency response of an EqView; the response is the product of all bands." .
+
+openrig:shape
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "shape" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range openrig:FilterShape ;
+    rdfs:comment "Fixed shape of a band, or the shape an openrig:ShapeChoice selects." .
+
+openrig:shapePort
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "shapePort" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Symbol of the port choosing the band shape, with one openrig:shapeChoice per value." .
+
+openrig:shapeChoice
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "shapeChoice" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range openrig:ShapeChoice ;
+    rdfs:comment "Maps one rdf:value of the openrig:shapePort to an openrig:shape." .
+
+openrig:frequency
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "frequency" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Fixed band frequency, Hz." .
+
+openrig:frequencyPort
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "frequencyPort" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Symbol of the port holding the band frequency, Hz." .
+
+openrig:gain
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "gain" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Fixed band gain, dB." .
+
+openrig:gainPort
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "gainPort" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Symbol of the port holding the band gain, dB." .
+
+openrig:q
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "q" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Fixed band Q, read per openrig:qUnit." .
+
+openrig:qPort
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "qPort" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Symbol of the port holding the band Q, read per openrig:qUnit." .
+
+openrig:qUnit
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "qUnit" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range openrig:QUnit ;
+    rdfs:comment "How the band Q reads." .
+
+openrig:enablePort
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "enablePort" ;
+    rdfs:domain openrig:Curve ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Symbol of a toggle port; the band is flat while it is 0." .
+
+openrig:family
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "family" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:Family ;
+    rdfs:comment "The plugin's family; a host without faceplates draws every family alike." .
+
+openrig:faceColor
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "faceColor" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range xsd:string ;
+    rdfs:comment "Faceplate colour, \"#RRGGBB\" in sRGB. The host keeps its own accent, text and texture over it, and may darken or lighten it to keep labels readable." .
+
+openrig:knobStyle
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "knobStyle" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:KnobStyle ;
+    rdfs:comment "The knob shape of the faceplate." .
+
+openrig:finish
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "finish" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:Finish ;
+    rdfs:comment "The surface of the faceplate." .
+
+openrig:wear
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "wear" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "How worn the faceplate looks, 0 (new) to 1, fixed for the plugin. The host draws the wear from a seed it derives from the plugin URI, so a plugin always looks the same." .
+
+openrig:plateName
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "plateName" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range xsd:string ;
+    rdfs:comment "The short name printed on the faceplate, 12 characters at most." .
+
+openrig:plateStyle
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "plateStyle" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range openrig:PlateStyle ;
+    rdfs:comment "The lettering of the plate name, openrig:Silkscreen when absent. Signature plugins only." .
+
+openrig:tagline
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "tagline" ;
+    rdfs:domain lv2:Plugin ;
+    rdfs:range xsd:string ;
+    rdfs:comment "A few words under the plugin's name, 48 characters at most." .
+
+openrig:order
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "order" ;
+    rdfs:domain lv2:Port ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:comment "Place (1 first) of the control on the faceplate, in reading order. Controls without one stay in the host's full control list." .
+
+openrig:role
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "role" ;
+    rdfs:domain lv2:Port ;
+    rdfs:range openrig:Role ;
+    rdfs:comment "What the port means to the view." .
+
+openrig:primary
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "primary" ;
+    rdfs:domain lv2:Port ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:comment "Rank (1 first) of the port among the controls a compact host shows first, such as the knob strip of a footswitch screen." .
+
+openrig:stream
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "stream" ;
+    rdfs:domain lv2:Port ;
+    rdfs:range openrig:Stream ;
+    rdfs:comment "The frames this atom output sends." .
+
+openrig:content
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "content" ;
+    rdfs:domain openrig:Stream ;
+    rdfs:range openrig:StreamContent ;
+    rdfs:comment "What the values of each frame are." .
+
+openrig:length
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "length" ;
+    rdfs:domain openrig:Stream ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:comment "Values per channel in each frame." .
+
+openrig:channels
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "channels" ;
+    rdfs:domain openrig:Stream ;
+    rdfs:range xsd:positiveInteger ;
+    rdfs:comment "Channels in each frame. Also the key of the channel count in an openrig:Frame." .
+
+openrig:rate
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "rate" ;
+    rdfs:domain openrig:Stream ;
+    rdfs:range xsd:decimal ;
+    rdfs:comment "Most frames per second the plugin sends, Hz." .
+
+openrig:position
+    a rdf:Property , owl:DatatypeProperty ;
+    rdfs:label "position" ;
+    rdfs:domain openrig:Frame ;
+    rdfs:range xsd:float ;
+    rdfs:comment "A position in the frame (the current LFO phase of a ModulationCycle), per openrig:content." .
+
+openrig:values
+    a rdf:Property , owl:ObjectProperty ;
+    rdfs:label "values" ;
+    rdfs:domain openrig:Frame ;
+    rdfs:range atom:Vector ;
+    rdfs:comment "The values of the frame, channel after channel." .
+
+openrig:EqView
+    a openrig:View ;
+    rdfs:label "EqView" ;
+    rdfs:comment "Frequency response drawn from the plugin's openrig:curve descriptions." .
+
+openrig:DynamicsView
+    a openrig:View ;
+    rdfs:label "DynamicsView" ;
+    rdfs:comment "Static input/output level curve drawn from the threshold, ratio, knee and makeup roles, with the gain reduction meter." .
+
+openrig:EchoTimelineView
+    a openrig:View ;
+    rdfs:label "EchoTimelineView" ;
+    rdfs:comment "Echoes on a time axis drawn from the delay time, feedback and mix or wet level roles, over the host's tempo grid; the first echo can be dragged to set the delay time." .
+
+openrig:DecayCurveView
+    a openrig:View ;
+    rdfs:label "DecayCurveView" ;
+    rdfs:comment "Decay time against frequency drawn from the decay and crossover roles." .
+
+openrig:LfoView
+    a openrig:View ;
+    rdfs:label "LfoView" ;
+    rdfs:comment "One cycle of the modulation drawn from the LFO roles and openrig:waveform, or from a ModulationCycle stream." .
+
+openrig:PitchView
+    a openrig:View ;
+    rdfs:label "PitchView" ;
+    rdfs:comment "Pitch shift on a neck or keyboard drawn from the pitch roles and note meters." .
+
+openrig:SweepView
+    a openrig:View ;
+    rdfs:label "SweepView" ;
+    rdfs:comment "Filter response along its sweep drawn from the sweep roles." .
+
+openrig:StepGridView
+    a openrig:View ;
+    rdfs:label "StepGridView" ;
+    rdfs:comment "One bar in steps drawn from a StepGrid stream: the level each step lets through, the slice captured and its repeats, the playback speed and the playhead." .
+
+openrig:mix
+    a openrig:Role ;
+    rdfs:label "mix" ;
+    rdfs:comment "Wet share. 0 is dry only, the maximum of the range is wet only." .
+
+openrig:wetLevel
+    a openrig:Role ;
+    rdfs:label "wetLevel" ;
+    rdfs:comment "Level of the effect added to the dry signal, which stays at unity: 0 adds nothing; linear 0 to 1 (or 100 %), or dB when the unit says." .
+
+openrig:inputGain
+    a openrig:Role ;
+    rdfs:label "inputGain" ;
+    rdfs:comment "Gain applied before the effect, dB." .
+
+openrig:outputGain
+    a openrig:Role ;
+    rdfs:label "outputGain" ;
+    rdfs:comment "Gain applied after the effect, dB." .
+
+openrig:inputLevel
+    a openrig:Role ;
+    rdfs:label "inputLevel" ;
+    rdfs:comment "Meter: input level, dBFS." .
+
+openrig:outputLevel
+    a openrig:Role ;
+    rdfs:label "outputLevel" ;
+    rdfs:comment "Meter: output level, dBFS." .
+
+openrig:lfoRate
+    a openrig:Role ;
+    rdfs:label "lfoRate" ;
+    rdfs:comment "LFO frequency, Hz." .
+
+openrig:lfoDepth
+    a openrig:Role ;
+    rdfs:label "lfoDepth" ;
+    rdfs:comment "Modulation depth. The minimum of the range is no modulation, the maximum is full modulation." .
+
+openrig:lfoShape
+    a openrig:Role ;
+    rdfs:label "lfoShape" ;
+    rdfs:comment "Continuous waveform morph of openrig:waveform, from the minimum to the maximum of the range." .
+
+openrig:lfoWaveform
+    a openrig:Role ;
+    rdfs:label "lfoWaveform" ;
+    rdfs:comment "Choice of waveform; scale point labels name the waveforms of openrig:Waveform (Sine, Triangle, Square, Saw Up, Saw Down)." .
+
+openrig:lfoTempoDivision
+    a openrig:Role ;
+    rdfs:label "lfoTempoDivision" ;
+    rdfs:comment "Choice of note value the LFO follows when synced to the tempo; scale point labels are note values (1/4, 1/8., 1/8T). A value of 0 means not synced." .
+
+openrig:lfoPhase
+    a openrig:Role ;
+    rdfs:label "lfoPhase" ;
+    rdfs:comment "Meter: current LFO phase in turns, 0 to 1." .
+
+openrig:stereoPhase
+    a openrig:Role ;
+    rdfs:label "stereoPhase" ;
+    rdfs:comment "Phase offset of the right channel's LFO, degrees, or spread (0 to 100 %)." .
+
+openrig:modulationGain
+    a openrig:Role ;
+    rdfs:label "modulationGain" ;
+    rdfs:comment "Meter: gain the modulation applies now, linear 0 to 1." .
+
+openrig:crossoverFrequency
+    a openrig:Role ;
+    rdfs:label "crossoverFrequency" ;
+    rdfs:comment "Split frequency between bands modulated differently, Hz." .
+
+openrig:threshold
+    a openrig:Role ;
+    rdfs:label "threshold" ;
+    rdfs:comment "Level where the dynamics curve bends, dBFS." .
+
+openrig:ratio
+    a openrig:Role ;
+    rdfs:label "ratio" ;
+    rdfs:comment "Compression ratio (input dB over output dB above the threshold)." .
+
+openrig:knee
+    a openrig:Role ;
+    rdfs:label "knee" ;
+    rdfs:comment "Width of the soft knee, dB." .
+
+openrig:attack
+    a openrig:Role ;
+    rdfs:label "attack" ;
+    rdfs:comment "Attack time, ms." .
+
+openrig:release
+    a openrig:Role ;
+    rdfs:label "release" ;
+    rdfs:comment "Release time, ms." .
+
+openrig:makeup
+    a openrig:Role ;
+    rdfs:label "makeup" ;
+    rdfs:comment "Gain added after the reduction, dB." .
+
+openrig:range
+    a openrig:Role ;
+    rdfs:label "range" ;
+    rdfs:comment "How far a gate or expander lowers the signal, dB (negative)." .
+
+openrig:gainReduction
+    a openrig:Role ;
+    rdfs:label "gainReduction" ;
+    rdfs:comment "Meter: current gain reduction, dB (positive or negative, units say)." .
+
+openrig:delayTime
+    a openrig:Role ;
+    rdfs:label "delayTime" ;
+    rdfs:comment "Time between echoes, in the port's unit (s or ms)." .
+
+openrig:feedback
+    a openrig:Role ;
+    rdfs:label "feedback" ;
+    rdfs:comment "Share of each echo fed into the next, 0 to the maximum of the range (1 or 100 %)." .
+
+openrig:delayTempoDivision
+    a openrig:Role ;
+    rdfs:label "delayTempoDivision" ;
+    rdfs:comment "Choice of note value the delay follows when synced to the tempo; a value of 0 means not synced." .
+
+openrig:currentDelayTime
+    a openrig:Role ;
+    rdfs:label "currentDelayTime" ;
+    rdfs:comment "Meter: delay time playing now, after tempo sync and any glide, in the port's unit (s or ms)." .
+
+openrig:pingPong
+    a openrig:Role ;
+    rdfs:label "pingPong" ;
+    rdfs:comment "Toggle: echoes alternate between the left and right outputs." .
+
+openrig:preDelay
+    a openrig:Role ;
+    rdfs:label "preDelay" ;
+    rdfs:comment "Delay before the reverb, ms." .
+
+openrig:decay
+    a openrig:Role ;
+    rdfs:label "decay" ;
+    rdfs:comment "Decay time (RT60) at middle frequencies, s." .
+
+openrig:decayLow
+    a openrig:Role ;
+    rdfs:label "decayLow" ;
+    rdfs:comment "Decay time of the low band, s, or a multiplier of the mid decay when unitless." .
+
+openrig:decayHigh
+    a openrig:Role ;
+    rdfs:label "decayHigh" ;
+    rdfs:comment "Decay time of the high band, s, or a multiplier of the mid decay when unitless." .
+
+openrig:crossoverLow
+    a openrig:Role ;
+    rdfs:label "crossoverLow" ;
+    rdfs:comment "Frequency between the low and mid decay bands, Hz." .
+
+openrig:crossoverHigh
+    a openrig:Role ;
+    rdfs:label "crossoverHigh" ;
+    rdfs:comment "Frequency between the mid and high decay bands, Hz." .
+
+openrig:size
+    a openrig:Role ;
+    rdfs:label "size" ;
+    rdfs:comment "Room size, unitless or m." .
+
+openrig:damping
+    a openrig:Role ;
+    rdfs:label "damping" ;
+    rdfs:comment "High frequency damping of the tail." .
+
+openrig:pitchShift
+    a openrig:Role ;
+    rdfs:label "pitchShift" ;
+    rdfs:comment "Pitch shift, semitones (or cents per the unit)." .
+
+openrig:detectedNote
+    a openrig:Role ;
+    rdfs:label "detectedNote" ;
+    rdfs:comment "Meter: detected input note, MIDI note number (0 when none)." .
+
+openrig:detectedCents
+    a openrig:Role ;
+    rdfs:label "detectedCents" ;
+    rdfs:comment "Meter: deviation of the detected note, cents." .
+
+openrig:trackingQuality
+    a openrig:Role ;
+    rdfs:label "trackingQuality" ;
+    rdfs:comment "Meter: confidence of the pitch tracking, 0 to 1." .
+
+openrig:pedalPosition
+    a openrig:Role ;
+    rdfs:label "pedalPosition" ;
+    rdfs:comment "Expression pedal position, minimum heel down to maximum toe down." .
+
+openrig:sweepLow
+    a openrig:Role ;
+    rdfs:label "sweepLow" ;
+    rdfs:comment "Filter frequency at the heel, Hz." .
+
+openrig:sweepHigh
+    a openrig:Role ;
+    rdfs:label "sweepHigh" ;
+    rdfs:comment "Filter frequency at the toe, Hz." .
+
+openrig:resonance
+    a openrig:Role ;
+    rdfs:label "resonance" ;
+    rdfs:comment "Filter resonance (Q)." .
+
+openrig:Sine
+    a openrig:Waveform ;
+    rdfs:label "Sine" ;
+    rdfs:comment "sin(2 pi phase)." .
+
+openrig:Triangle
+    a openrig:Waveform ;
+    rdfs:label "Triangle" ;
+    rdfs:comment "Triangle, 0 at phase 0, 1 at 1/4, -1 at 3/4." .
+
+openrig:Square
+    a openrig:Waveform ;
+    rdfs:label "Square" ;
+    rdfs:comment "1 for phase below 1/2, -1 above." .
+
+openrig:SawUp
+    a openrig:Waveform ;
+    rdfs:label "SawUp" ;
+    rdfs:comment "2 phase - 1." .
+
+openrig:SawDown
+    a openrig:Waveform ;
+    rdfs:label "SawDown" ;
+    rdfs:comment "1 - 2 phase." .
+
+openrig:SineToSquare
+    a openrig:Waveform ;
+    rdfs:label "SineToSquare" ;
+    rdfs:comment "tanh(k sin(2 pi phase)) / tanh(k) with k = 16 s^2, s the openrig:lfoShape position on its range from 0 to 1. A pure sine at s = 0." .
+
+openrig:Lowpass
+    a openrig:FilterShape ;
+    rdfs:label "Lowpass" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Highpass
+    a openrig:FilterShape ;
+    rdfs:label "Highpass" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Bandpass
+    a openrig:FilterShape ;
+    rdfs:label "Bandpass" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Notch
+    a openrig:FilterShape ;
+    rdfs:label "Notch" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Allpass
+    a openrig:FilterShape ;
+    rdfs:label "Allpass" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Peak
+    a openrig:FilterShape ;
+    rdfs:label "Peak" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:LowShelf
+    a openrig:FilterShape ;
+    rdfs:label "LowShelf" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:HighShelf
+    a openrig:FilterShape ;
+    rdfs:label "HighShelf" ;
+    rdfs:comment "RBJ Audio EQ Cookbook response." .
+
+openrig:Off
+    a openrig:FilterShape ;
+    rdfs:label "Off" ;
+    rdfs:comment "No band: a flat response of 0 dB." .
+
+openrig:Q
+    a openrig:QUnit ;
+    rdfs:label "Q" ;
+    rdfs:comment "Cookbook Q." .
+
+openrig:Octaves
+    a openrig:QUnit ;
+    rdfs:label "Octaves" ;
+    rdfs:comment "Bandwidth in octaves (cookbook BW)." .
+
+openrig:Slope
+    a openrig:QUnit ;
+    rdfs:label "Slope" ;
+    rdfs:comment "Shelf slope S (cookbook); 1 is the steepest without overshoot." .
+
+openrig:Compressor
+    a openrig:DynamicsKind ;
+    rdfs:label "Compressor" ;
+    rdfs:comment "Kind of dynamics processor." .
+
+openrig:Limiter
+    a openrig:DynamicsKind ;
+    rdfs:label "Limiter" ;
+    rdfs:comment "Kind of dynamics processor." .
+
+openrig:Gate
+    a openrig:DynamicsKind ;
+    rdfs:label "Gate" ;
+    rdfs:comment "Kind of dynamics processor." .
+
+openrig:Expander
+    a openrig:DynamicsKind ;
+    rdfs:label "Expander" ;
+    rdfs:comment "Kind of dynamics processor." .
+
+openrig:ModulationCycle
+    a openrig:StreamContent ;
+    rdfs:label "ModulationCycle" ;
+    rdfs:comment "One cycle of the gain the modulation applies, linear 0 to 1, from LFO phase 0 to 1, one row per channel. openrig:position is the current phase." .
+
+openrig:Spectrum
+    a openrig:StreamContent ;
+    rdfs:label "Spectrum" ;
+    rdfs:comment "Magnitude spectrum in dBFS on openrig:length log-spaced bins from 20 Hz to 20 kHz, one row per channel." .
+
+openrig:LevelHistory
+    a openrig:StreamContent ;
+    rdfs:label "LevelHistory" ;
+    rdfs:comment "Level history in dBFS, oldest value first, evenly spaced over the frame interval, one row per channel." .
+
+openrig:StepGrid
+    a openrig:StreamContent ;
+    rdfs:label "StepGrid" ;
+    rdfs:comment "One bar from the downbeat in openrig:length equal cells, three rows: the level each cell lets through (linear, 0 to 1); its source (0 the live input, 1 the slice being captured, 2 a repeat of it); its playback speed (1 normal, 0 stopped, negative backward). openrig:position is the playhead, the fraction of the bar elapsed." .
+
+openrig:Basic
+    a openrig:Family ;
+    rdfs:label "Basic" ;
+    rdfs:comment "A simple, versatile tool. The host draws it in its own look; openrig:faceColor and openrig:knobStyle are hints at most." .
+
+openrig:Signature
+    a openrig:Family ;
+    rdfs:label "Signature" ;
+    rdfs:comment "A plugin with a character of its own. The host draws it as a faceplate in its openrig:faceColor with openrig:knobStyle knobs." .
+
+openrig:Plain
+    a openrig:KnobStyle ;
+    rdfs:label "Plain" ;
+    rdfs:comment "The host's own knob." .
+
+openrig:Skirted
+    a openrig:KnobStyle ;
+    rdfs:label "Skirted" ;
+    rdfs:comment "A cap over a wider skirt marked with the scale, a line pointer on the cap." .
+
+openrig:Chickenhead
+    a openrig:KnobStyle ;
+    rdfs:label "Chickenhead" ;
+    rdfs:comment "A tapered pointer knob: the position reads from the shape itself." .
+
+openrig:Domed
+    a openrig:KnobStyle ;
+    rdfs:label "Domed" ;
+    rdfs:comment "A smooth round cap with a dot or short line as the pointer." .
+
+openrig:Painted
+    a openrig:Finish ;
+    rdfs:label "Painted" ;
+    rdfs:comment "Paint over the enclosure: an even colour with a slight grain." .
+
+openrig:Brushed
+    a openrig:Finish ;
+    rdfs:label "Brushed" ;
+    rdfs:comment "Bare brushed metal tinted by the colour: fine parallel streaks." .
+
+openrig:Silkscreen
+    a openrig:PlateStyle ;
+    rdfs:label "Silkscreen" ;
+    rdfs:comment "The plate name printed plainly in the host's lettering. The default." .
+
+openrig:Glitch
+    a openrig:PlateStyle ;
+    rdfs:label "Glitch" ;
+    rdfs:comment "The plate name cut by two horizontal bands shifted sideways, as a corrupted picture: the band from 20 to 30 % of the cap height (from the baseline) moves right by 8 % of the cap height and takes the host's accent colour, the band from 62 to 70 % moves left by 4 %. Fixed, never animated." .

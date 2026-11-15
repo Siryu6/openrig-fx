@@ -1,0 +1,94 @@
+name: Release
+
+# A vX.Y.Z tag on main: build and validate the bundles natively on x86_64
+# and aarch64, then publish one archive per architecture and SHA256SUMS.
+# OpenRig's plugin store pins these files by size and sha256: a published
+# file is never replaced, a fix is a new version.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  bundles:
+    name: Bundles (${{ matrix.arch }})
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+            triple: x86_64-unknown-linux-gnu
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+            triple: aarch64-unknown-linux-gnu
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: The tag matches the workspace version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          version=$(sed -n 's/^version = "\(.*\)"$/\1/p' Cargo.toml | head -n 1)
+          if [ "v$version" != "$TAG" ]; then
+            echo "::error::tag $TAG, but Cargo.toml says $version"
+            exit 1
+          fi
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/lv2-tools
+      # Tests, release build, assembly and every check; a missing tool fails
+      - run: cargo xtask bundle --strict
+      - name: Pack
+        env:
+          TAG: ${{ github.ref_name }}
+          ARCH: ${{ matrix.arch }}
+          TRIPLE: ${{ matrix.triple }}
+        run: |
+          name="openrig-fx-${TAG#v}-$ARCH"
+          mkdir -p "dist/$name"
+          cp -r target/bundles/"$TRIPLE"/*.lv2 "dist/$name/"
+          cp LICENSE README.md "dist/$name/"
+          # Reproducible: sorted entries, fixed owner, times of the commit
+          epoch=$(git log -1 --format=%ct)
+          tar -C dist --sort=name --owner=0 --group=0 --numeric-owner \
+            --mtime="@$epoch" -cf - "$name" | gzip -9n > "dist/$name.tar.gz"
+          ls -l dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: release-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  publish:
+    needs: bundles
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAG: ${{ github.ref_name }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: release-*
+          merge-multiple: true
+          path: dist
+      - name: Checksums
+        run: |
+          cd dist
+          sha256sum -- *.tar.gz > SHA256SUMS
+          cat SHA256SUMS
+          ls -l
+      - name: Publish the release
+        run: |
+          gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1 ||
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --verify-tag \
+              --generate-notes --title "OpenRig FX ${TAG#v}"
+          # Never replace a published file: the store pins its sha256
+          gh release upload "$TAG" -R "$GITHUB_REPOSITORY" dist/*.tar.gz dist/SHA256SUMS

@@ -1,0 +1,9 @@
+# Port lock of https://openrig.eu/plugins/drive: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 mode control-in
+3 drive control-in
+4 tone control-in
+5 bass control-in
+6 level control-in
+7 enabled enabled

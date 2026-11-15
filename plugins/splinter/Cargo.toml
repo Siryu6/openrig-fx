@@ -1,0 +1,24 @@
+[package]
+name = "orx-splinter"
+description = "OR Splinter: tempo-synced stutter, tape stop, chop and crush, for OpenRig"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-dsp.workspace = true
+orx-plugin.workspace = true
+
+[dev-dependencies]
+orx-test.workspace = true
+orx-lv2.workspace = true
+
+[[bench]]
+name = "splinter"
+harness = false
+
+[lints]
+workspace = true

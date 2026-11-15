@@ -1,0 +1,21 @@
+[package]
+name = "orx-eq-lv2"
+description = "OR EQ and OR Graphic EQ as an LV2 bundle (or-eq.lv2)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "or_eq"
+crate-type = ["cdylib"]
+
+[dependencies]
+orx-lv2.workspace = true
+orx-eq.workspace = true
+
+[lints]
+workspace = true

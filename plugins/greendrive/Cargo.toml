@@ -1,0 +1,24 @@
+[package]
+name = "orx-green-drive"
+description = "OR Green Drive: a circuit model of the classic mid-hump op-amp overdrive, for OpenRig"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-dsp.workspace = true
+orx-plugin.workspace = true
+
+[dev-dependencies]
+orx-test.workspace = true
+orx-lv2.workspace = true
+
+[[bench]]
+name = "green-drive"
+harness = false
+
+[lints]
+workspace = true

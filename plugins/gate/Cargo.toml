@@ -1,0 +1,24 @@
+[package]
+name = "orx-gate"
+description = "OR Gate: a noise gate with hysteresis, hold and decay for high-gain rigs, for OpenRig"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-dsp.workspace = true
+orx-plugin.workspace = true
+
+[dev-dependencies]
+orx-test.workspace = true
+orx-lv2.workspace = true
+
+[[bench]]
+name = "gate"
+harness = false
+
+[lints]
+workspace = true

@@ -1,0 +1,11 @@
+# Port lock of https://openrig.eu/plugins/drop: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 shift control-in
+3 mix control-in
+4 mode control-in
+5 dive control-in
+6 dive_to control-in
+7 dive_time control-in
+8 enabled enabled
+9 latency latency

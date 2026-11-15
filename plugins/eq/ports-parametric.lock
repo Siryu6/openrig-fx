@@ -1,0 +1,22 @@
+# Port lock of https://openrig.eu/plugins/eq: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 low_cut_on control-in
+3 low_cut control-in
+4 low_freq control-in
+5 low_gain control-in
+6 low_mid_freq control-in
+7 low_mid_gain control-in
+8 low_mid_q control-in
+9 mid_freq control-in
+10 mid_gain control-in
+11 mid_q control-in
+12 high_mid_freq control-in
+13 high_mid_gain control-in
+14 high_mid_q control-in
+15 high_freq control-in
+16 high_gain control-in
+17 high_cut_on control-in
+18 high_cut control-in
+19 level control-in
+20 enabled enabled

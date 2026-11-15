@@ -1,0 +1,21 @@
+[package]
+name = "orx-echo-lv2"
+description = "OR Echo as an LV2 bundle (or-echo.lv2)"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+publish = false
+
+[lib]
+name = "or_echo"
+crate-type = ["cdylib"]
+
+[dependencies]
+orx-lv2.workspace = true
+orx-echo.workspace = true
+
+[lints]
+workspace = true

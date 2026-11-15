@@ -1,0 +1,26 @@
+[package]
+name = "orx-suite"
+description = "Registry of the OpenRig FX plugins and of the LV2 bundles that ship them"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-plugin.workspace = true
+orx-tremolo.workspace = true
+orx-echo.workspace = true
+orx-plate.workspace = true
+orx-eq.workspace = true
+orx-drive.workspace = true
+orx-gate.workspace = true
+orx-comp.workspace = true
+orx-green-drive.workspace = true
+orx-black-dist.workspace = true
+orx-drop.workspace = true
+orx-splinter.workspace = true
+
+[lints]
+workspace = true

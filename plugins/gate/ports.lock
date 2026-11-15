@@ -1,0 +1,9 @@
+# Port lock of https://openrig.eu/plugins/gate: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 threshold control-in
+3 decay control-in
+4 hold control-in
+5 range control-in
+6 reduction control-out
+7 enabled enabled

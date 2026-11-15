@@ -1,0 +1,19 @@
+[package]
+name = "orx-lv2"
+description = "Thin LV2 wrapper of OpenRig FX: C ABI, atoms, state, Turtle generation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-plugin.workspace = true
+orx-dsp.workspace = true
+
+[dev-dependencies]
+orx-test.workspace = true
+
+[lints]
+workspace = true

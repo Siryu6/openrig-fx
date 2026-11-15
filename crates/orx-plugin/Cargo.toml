@@ -1,0 +1,16 @@
+[package]
+name = "orx-plugin"
+description = "Format-neutral plugin model of OpenRig FX: ports, parameters, views, state, and the runner shared by every wrapper"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+
+[dependencies]
+orx-dsp.workspace = true
+orx-simd.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,12 @@
+# Port lock of https://openrig.eu/plugins/comp: append only, never edit a line
+0 in audio-in
+1 out audio-out
+2 threshold control-in
+3 ratio control-in
+4 knee control-in
+5 attack control-in
+6 release control-in
+7 level control-in
+8 mix control-in
+9 reduction control-out
+10 enabled enabled
