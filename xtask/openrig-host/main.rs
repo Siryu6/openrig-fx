@@ -17,6 +17,8 @@ use orx_plugin::process::NoStreams;
 use orx_plugin::runner::TRAIL_LIMIT_S;
 use orx_plugin::{Config, Event, EventKind, ParamKind, PluginInfo, PortKind, Position};
 use pedalboard::audio::ChainNode;
+use pedalboard::audio::transport::Transport;
+use pedalboard::plugins::chain::no_io;
 use pedalboard::plugins::lv2_host::{Lv2Host, host_from_path};
 use pedalboard::plugins::scanner::{self, PortType};
 use pedalboard::plugins::{ChainCommand, ChainSpec, EffectChain};
@@ -91,10 +93,11 @@ fn check_plugin(host: &Lv2Host, entry: &Entry, out: &mut Out) {
         &format!("{} presets read as described", found.presets.len()),
         &presets(info, found),
     );
-    if info.ports.iter().any(|p| p.kind == PortKind::Enabled) {
-        out.note(
+    if let Some(port) = info.ports.iter().position(|p| p.kind == PortKind::Enabled) {
+        out.verdict(
             &format!("{check}:enabled"),
-            "OpenRig lists the lv2:enabled port as a control; it should hide it and bypass through it",
+            "OpenRig hides the lv2:enabled port from the controls and bypasses through it",
+            &enabled(info, found, port),
         );
     }
 
@@ -196,6 +199,21 @@ fn ports(info: &PluginInfo, found: &scanner::PluginInfo) -> Vec<String> {
     problems
 }
 
+/// OpenRig keeps the lv2:enabled port at `port` out of the parameters and
+/// drives it from the bypass
+fn enabled(info: &PluginInfo, found: &scanner::PluginInfo, port: usize) -> Vec<String> {
+    let mut problems = Vec::new();
+    if found.enabled_port() != Some(port) {
+        problems.push(format!("bypass port read as {:?}", found.enabled_port()));
+    }
+    let controls: Vec<usize> = found.control_inputs().map(|p| p.index).collect();
+    let described: Vec<usize> = (0..info.ports.len()).filter(|i| is_input_control(info, *i)).collect();
+    if controls != described {
+        problems.push(format!("controls at ports {controls:?}, parameters at {described:?}"));
+    }
+    problems
+}
+
 fn presets(info: &PluginInfo, found: &scanner::PluginInfo) -> Vec<String> {
     let mut problems = Vec::new();
     if found.presets.len() != info.presets.len() {
@@ -252,16 +270,36 @@ fn signal(frames: usize, seed: f32) -> Vec<f32> {
         .collect()
 }
 
-/// The transport as OpenRig writes it (`atom::write_input`)
-fn position() -> Event {
+/// OpenRig's clock at `BPM`, from the start of the audio
+fn new_clock() -> Transport {
+    let mut clock = Transport::new(RATE);
+    clock.set_bpm(BPM);
+    clock
+}
+
+/// The transport as OpenRig writes it at the start of each block
+/// (`atom::write_input`): the clock's position, playing, in 4/4
+fn position(clock: &Transport) -> Event {
+    let now = clock.position();
     let p = Position {
-        bpm: Some(BPM),
-        speed: Some(1.0),
-        bar_beat: Some(0.0),
+        bpm: Some(now.bpm),
+        speed: Some(now.speed()),
+        bar_beat: Some(now.bar_beat()),
         beats_per_bar: Some(4.0),
         beat_unit: Some(4),
     };
     Event { frame: 0, kind: EventKind::Position(p) }
+}
+
+/// One block of `chain` at the clock's position, as the audio thread runs
+/// it; the clock then moves on by the block
+fn chain_block(chain: &mut EffectChain, clock: &mut Transport, l: &mut [f32], r: &mut [f32]) {
+    no_io(|io| {
+        io.set_start(Some(clock.position()));
+        io.part(0, l.len(), 1.0, 1.0);
+        chain.process_io(l, r, io);
+    });
+    clock.advance(l.len());
 }
 
 /// Value of every control input, by port: `values` by symbol, defaults
@@ -277,9 +315,10 @@ fn controls(info: &PluginInfo, values: &[(&str, f32)]) -> Vec<(usize, f32)> {
         .collect()
 }
 
-/// A control input: what OpenRig calls a parameter
+/// A parameter: a control input other than lv2:enabled, which OpenRig
+/// keeps for its bypass
 fn is_input_control(info: &PluginInfo, port: usize) -> bool {
-    matches!(info.ports[port].kind, PortKind::Param(_) | PortKind::Enabled)
+    matches!(info.ports[port].kind, PortKind::Param(_))
 }
 
 /// Index of a port among the control inputs: OpenRig's parameter index
@@ -309,6 +348,7 @@ fn compare(host: &Lv2Host, entry: &Entry, values: &[(usize, f32)], changes: &[Ch
     // The plugin's runner, fed as OpenRig feeds it: a mono signal into
     // every input
     let mut runner = runner(entry, values);
+    let mut clock = new_clock();
     let outputs = info.audio_outputs();
     let mut expected = vec![vec![0.0; end * BLOCK]; outputs];
     let mut idle_from = None;
@@ -318,7 +358,9 @@ fn compare(host: &Lv2Host, entry: &Entry, values: &[(usize, f32)], changes: &[Ch
             runner.set_param(port, value);
         }
         let span = blocks * BLOCK..(blocks + 1) * BLOCK;
+        runner.push_event(position(&clock));
         run_block(runner.as_mut(), &input[span.clone()], &mut expected, span);
+        clock.advance(BLOCK);
         blocks += 1;
         if idle_from.is_none() && bypass.is_some_and(|from| blocks > from) && runner.is_idle() {
             idle_from = Some(blocks);
@@ -354,13 +396,18 @@ fn compare(host: &Lv2Host, entry: &Entry, values: &[(usize, f32)], changes: &[Ch
         return vec![format!("EffectChain::build: {errors:?}")];
     }
     chain.apply(&ChainCommand::SetTempo { bpm: BPM });
+    let mut clock = new_clock();
     let (mut left, mut right) = (input.to_vec(), input.to_vec());
     for (b, (l, r)) in left.chunks_mut(BLOCK).zip(right.chunks_mut(BLOCK)).enumerate() {
         for &(_, port, value) in changes.iter().filter(|c| c.0 == b) {
-            let index = param_index(info, port);
-            chain.apply(&ChainCommand::SetParameter { instance_id: id, index, value });
+            let command = if info.ports[port].kind == PortKind::Enabled {
+                ChainCommand::SetEnabled { instance_id: id, enabled: value > 0.5 }
+            } else {
+                ChainCommand::SetParameter { instance_id: id, index: param_index(info, port), value }
+            };
+            chain.apply(&command);
         }
-        chain.process(l, r);
+        chain_block(&mut chain, &mut clock, l, r);
     }
 
     let mut problems = Vec::new();
@@ -416,24 +463,34 @@ fn differences(side: &str, got: &[f32], want: &[f32], problems: &mut Vec<String>
     }
 }
 
-/// The runner of `entry`, active, with `values` and the transport
+/// The runner of `entry`, active, with `values`. A plugin that reports a
+/// latency first runs one block on silence at its defaults, as OpenRig
+/// runs it when it loads it, to read that latency.
 fn runner(entry: &Entry, values: &[(usize, f32)]) -> Box<dyn DynRunner> {
     let mut r = (entry.create)(Config { sample_rate: f64::from(RATE), max_block: BLOCK });
     r.activate();
+    if entry.info.ports.iter().any(|p| p.kind == PortKind::Latency) {
+        let silence = [0.0; BLOCK];
+        let mut outputs = vec![vec![0.0; BLOCK]; entry.info.audio_outputs()];
+        run_block(r.as_mut(), &silence, &mut outputs, 0..BLOCK);
+    }
     for &(port, value) in values {
         r.set_param(port, value);
     }
-    r.push_event(position());
     r
 }
 
-/// Outputs of `entry`'s runner on `input` (into every input), by block
+/// Outputs of `entry`'s runner on `input` (into every input), by block,
+/// with the transport
 fn render(entry: &Entry, values: &[(usize, f32)], input: &[f32]) -> Vec<Vec<f32>> {
     let mut r = runner(entry, values);
+    let mut clock = new_clock();
     let mut outputs = vec![vec![0.0; input.len()]; entry.info.audio_outputs()];
     for (b, block) in input.chunks(BLOCK).enumerate() {
         let span = b * BLOCK..b * BLOCK + block.len();
+        r.push_event(position(&clock));
         run_block(r.as_mut(), block, &mut outputs, span);
+        clock.advance(block.len());
     }
     outputs
 }
@@ -478,9 +535,10 @@ fn dual_mono(host: &Lv2Host, out: &mut Out) {
         return out.fail("dual-mono", &format!("EffectChain::build: {errors:?}"));
     }
     chain.apply(&ChainCommand::SetTempo { bpm: BPM });
+    let mut clock = new_clock();
     let (mut left, mut right) = (input.clone(), input);
     for (l, r) in left.chunks_mut(BLOCK).zip(right.chunks_mut(BLOCK)) {
-        chain.process(l, r);
+        chain_block(&mut chain, &mut clock, l, r);
     }
 
     let defaults = controls(mono.info, &[]);
