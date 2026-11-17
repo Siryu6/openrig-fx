@@ -29,10 +29,10 @@ pub const SHIFT_MIN: i32 = -24;
 pub const SHIFT_MAX: i32 = 12;
 
 const PRESETS: &[Preset] = &[
-    Preset { name: "Drop D", id: "drop-d", values: &[("shift", -2.0)] },
+    Preset { name: "D Standard", id: "d-standard", values: &[("shift", -2.0)] },
     Preset { name: "Half Down", id: "half-down", values: &[("shift", -1.0)] },
-    Preset { name: "Drop C", id: "drop-c", values: &[("shift", -4.0)] },
-    Preset { name: "Drop A", id: "drop-a", values: &[("shift", -7.0), ("mode", 1.0)] },
+    Preset { name: "C Standard", id: "c-standard", values: &[("shift", -4.0)] },
+    Preset { name: "A Standard", id: "a-standard", values: &[("shift", -7.0), ("mode", 1.0)] },
     Preset { name: "Octave Down", id: "octave-down", values: &[("shift", -12.0), ("mode", 1.0)] },
     Preset { name: "Octave Blend", id: "octave-blend", values: &[("shift", -12.0), ("mix", 50.0), ("mode", 1.0)] },
     Preset {
@@ -63,7 +63,7 @@ pub static DROP: PluginInfo = PluginInfo {
             "Shift",
             Param::int(-2, SHIFT_MIN, SHIFT_MAX).unit(Unit::Semitones).role(Role::PitchShift).primary(1),
         )
-        .comment("Pitch shift in semitones: −2 for drop D from standard, −12 an octave down, up to +12."),
+        .comment("Pitch shift in semitones: the whole guitar moves: −2 for D standard, −12 an octave down, up to +12."),
         Port::param(
             "mix",
             "Mix",

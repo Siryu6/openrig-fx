@@ -285,8 +285,10 @@ Voicing choices so far:
   At eight times the rate, a 2 kHz note at full distortion aliases at
   -58 to -64 dB (silicon), -64 to -71 dB (LED) and -73 to -80 dB (none:
   the slew rate softens the edges).
-- **OR Drop.** The signature pitch pedal for low tunings: Drop D to
-  Drop A and an octave down from a standard-tuned guitar, and dives.
+- **OR Drop.** The signature pitch pedal for low tunings: D standard to
+  A standard and an octave down from a standard-tuned guitar, and dives.
+  Every string moves by the same amount: presets are named after the
+  standard tuning they reach (a drop tuning lowers one string only).
   The OpenRig touches are the explicit latency choice (Tight for the
   feel, Quality for 7- and 8-string guitars and octaves), reported to
   the host so a parallel path stays aligned, and the momentary Dive:
