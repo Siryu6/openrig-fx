@@ -9,8 +9,8 @@
 //! `docs/DESIGN.md` for why it was chosen.
 //!
 //! - Shift: −24 to +12 semitones, with a short glide while turning it.
-//! - Dive: a toggle (a momentary footswitch) gliding to Dive To over Dive
-//!   Time and back.
+//! - Dive: a toggle (a momentary footswitch) gliding Dive To semitones
+//!   away from Shift over Dive Time, and back.
 //! - Mode: Tight (6 ms) or Quality (14 ms, whole-period splices down to
 //!   36 Hz, for extended-range guitars and octaves down).
 //! - Mix: dry and shifted, the dry delayed by the same latency so they
