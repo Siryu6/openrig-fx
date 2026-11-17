@@ -81,7 +81,7 @@ pub static DROP: PluginInfo = PluginInfo {
             "While on, the pitch glides to Dive To over Dive Time, and glides back when off. Assign it to a momentary footswitch for dive bombs and pitch rises.",
         ),
         Port::param("dive_to", "Dive To", Param::int(-12, SHIFT_MIN, SHIFT_MAX).unit(Unit::Semitones))
-            .comment("Shift reached while Dive is on, semitones."),
+            .comment("Semitones added to Shift while Dive is on: -12 dives an octave below the tuning played. The total stays within -24 to +12."),
         Port::param(
             "dive_time",
             "Dive Time",

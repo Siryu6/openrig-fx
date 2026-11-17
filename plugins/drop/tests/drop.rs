@@ -396,6 +396,37 @@ fn the_dive_glides_down_and_back() {
 }
 
 #[test]
+fn the_dive_counts_from_the_shift() {
+    // Two semitones down, then an octave below that while Dive is on
+    let input = signal::sine(220.0, 0.3, SR, 96_000);
+    let params = [("shift", -2.0), ("dive_to", -12.0), ("dive_time", 200.0), ("mode", 1.0)];
+    let mut r = runner(&params);
+    let out = process(&mut r, &input, 64, |r, start| {
+        if start == 24_000 {
+            r.set_param(at("dive"), 1.0);
+        }
+    });
+    let track = pitch_track(&out, 80.0, 240.0);
+    let shifted = 220.0 * (-2.0f64 / 12.0).exp2();
+    for f in &track[1..3] {
+        assert!(cents(*f, shifted).abs() < 5.0, "{track:?}");
+    }
+    for f in &track[8..15] {
+        assert!(cents(*f, shifted / 2.0).abs() < 5.0, "{track:?}");
+    }
+}
+
+#[test]
+fn the_dive_stays_within_the_shift_range() {
+    // -12 and -24 make -36: held at -24, two octaves down
+    let input = signal::sine(220.0, 0.3, SR, 72_000);
+    let params = [("shift", -12.0), ("dive_to", -24.0), ("dive_time", 10.0), ("dive", 1.0), ("mode", 1.0)];
+    let out = render(&input, &params, 64);
+    let f = peak_frequency(&out[48_000..72_000], 40.0, 120.0);
+    assert!(cents(f, 55.0).abs() < 5.0, "{f}");
+}
+
+#[test]
 fn silence_stays_silent() {
     let zeros = vec![0.0f32; 24_000];
     let out = process(&mut runner(&[("shift", -12.0)]), &zeros, 64, |r, start| {

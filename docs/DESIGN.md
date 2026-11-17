@@ -290,8 +290,8 @@ Voicing choices so far:
   The OpenRig touches are the explicit latency choice (Tight for the
   feel, Quality for 7- and 8-string guitars and octaves), reported to
   the host so a parallel path stays aligned, and the momentary Dive:
-  a toggle meant for a momentary footswitch, gliding to its own shift
-  over Dive Time and back (a dive bomb at -24, a one-octave
+  a toggle meant for a momentary footswitch, gliding Dive To semitones
+  away from Shift over Dive Time and back (a dive bomb at -24, a one-octave
   rise at +12). Faceplate: oxblood (`#4A1418`), painted,
   heavily worn (0.6), chickenhead knobs.
 - **OR Splinter.** The tempo-synced glitch, for the stutters, tape stops

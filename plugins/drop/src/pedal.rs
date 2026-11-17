@@ -1,7 +1,7 @@
 //! The plugin: the shift and the dive as one gliding pitch, the shifter,
 //! the mix.
 
-use crate::info::{DROP, Mode};
+use crate::info::{DROP, Mode, SHIFT_MAX, SHIFT_MIN};
 use crate::shifter::{self, Shifter};
 use orx_dsp::Smoother;
 use orx_plugin::{Config, Context, Param, Plugin, PluginInfo, PortKind};
@@ -112,7 +112,9 @@ impl Plugin for DropPedal {
         let (dive, dive_time) = (p.on(ix.dive), 0.001 * f64::from(p.get(ix.dive_time)));
         let mode = Mode::from_value(p.int(ix.mode));
         let mix = p.get(ix.mix);
-        let target = if dive { dive_to } else { shift };
+        // Dive To counts from the shift: an octave down stays an octave
+        // below the tuning played, whatever the shift
+        let target = if dive { (shift + dive_to).clamp(f64::from(SHIFT_MIN), f64::from(SHIFT_MAX)) } else { shift };
         if self.fresh {
             self.fresh = false;
             self.mix.reset(mix);
